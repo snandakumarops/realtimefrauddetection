@@ -1,0 +1,42 @@
+package rules;
+
+import com.redhat.demo.dm.ccfraud.domain.CreditCardTransaction;
+
+import java.util.Collection;
+import java.util.ArrayList;
+
+declare CreditCardTransaction
+    @role( event )
+    @timestamp( timestamp )
+end
+
+declare PotentialFraudFact
+	creditCardNumber: long
+	transactions: java.util.ArrayList
+end
+
+rule "CC-Transactions last 15 minutes"
+when
+	accumulate ($cct: CreditCardTransaction() over window:time (15m) from entry-point Transactions;
+				$nrOfTransactions : count($cct),
+				$list: collectList($cct);
+				$nrOfTransactions >= 4)
+	$c1: CreditCardTransaction() from $list
+	$c2: CreditCardTransaction(this != $c1, this after[0s, 10s] $c1) from $list
+then
+	System.out.println("\nFound 4 or more cc transactions in last 15 minutes of current transaction");
+	System.out.println("And within that collection, there are 2 transactions within 10 seconds of each other.\n");
+	PotentialFraudFact potentialFraud = new PotentialFraudFact();
+	potentialFraud.setTransactions(new java.util.ArrayList());
+	potentialFraud.setCreditCardNumber($c1.getCreditCardNumber());
+	potentialFraud.getTransactions().add($c1);
+	potentialFraud.getTransactions().add($c2);
+	insert(potentialFraud);
+end
+
+rule "Found potential fraud"
+when
+	exists PotentialFraudFact()
+then
+	System.out.println("\n!!!! Found a potential fraud!!!!\n");
+end

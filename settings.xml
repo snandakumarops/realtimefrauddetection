@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/xsd/settings-1.0.0.xsd">
+<pluginGroups>
+<pluginGroup>org.mortbay.jetty</pluginGroup>
+</pluginGroups>
+    <localRepository/>
+    <profiles>
+    <profile>
+      <id>decision-central</id>
+      <repositories>
+      <repositories>
+        <repository>
+            <id>local-repo</id>
+            <url>https://mymavenrepo.com/repo/EQCJjcQQpqw5GXho9fd6/</url>
+        </repository>     
+        <servers> 
+         <server> 
+           <id>local-repo</id>
+            <username>dmAdmin</username> 
+            <password>redhatdm1!</password> 
+         </server> 
+      </servers> 
+      </repositories>
+    </profile>
+  
+    </profiles>
+    <activeProfiles>
+        <activeProfile>local-repo</activeProfile>
+    </activeProfiles>
+</settings>
